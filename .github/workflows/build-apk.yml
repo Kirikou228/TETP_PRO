@@ -1,0 +1,42 @@
+
+name: Construire APK TEPG PRO
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Recuperer le projet
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installer dependances systeme
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev
+
+      - name: Installer Buildozer
+        run: |
+          python -m pip install --upgrade pip
+          pip install buildozer "Cython==0.29.33"
+
+      - name: Compiler APK
+        run: buildozer -v android debug
+
+      - name: Publier APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEPG-PRO-APK
+          path: bin/*.apk
+          if-no-files-found: error
+          
