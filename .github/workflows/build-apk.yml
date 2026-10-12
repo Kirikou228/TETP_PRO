@@ -58,6 +58,20 @@ jobs:
           test -x "$SDK_ROOT/build-tools/37.0.0/aidl"
           echo "AIDL installé dans le SDK de Buildozer."
 
+      - name: Compatibilite sdkmanager Buildozer
+        run: |
+          SDK_ROOT="${ANDROID_HOME:-$HOME/.buildozer/android/platform/android-sdk}"
+          SDKMANAGER="$(find /usr/local/lib/android/sdk -type f -name sdkmanager | head -n 1)"
+
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERREUR : sdkmanager introuvable"
+            exit 1
+          fi
+
+          mkdir -p "$SDK_ROOT/tools/bin"
+          ln -sf "$SDKMANAGER" "$SDK_ROOT/tools/bin/sdkmanager"
+          ls -l "$SDK_ROOT/tools/bin/sdkmanager"
+
       - name: Compiler TEPG PRO
         env:
           P4A_ACCEPT_LICENSE: "1"
