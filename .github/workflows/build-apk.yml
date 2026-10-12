@@ -30,8 +30,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev
 
-      - name: Installer Android SDK
+      -       - name: Installer Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
+
+      - name: Accepter les licences Android
+        run: yes | sdkmanager --licenses
 
       - name: Installer outils Android
         run: |
