@@ -32,6 +32,11 @@ jobs:
             pkg-config zlib1g-dev libncurses5-dev \
             libncursesw5-dev cmake libffi-dev \
             libssl-dev automake
+                  - name: Installer Android Build Tools
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "build-tools;35.0.0"
+          echo "$ANDROID_HOME/build-tools/35.0.0" >> $GITHUB_PATH
 
       - name: Installer Buildozer
         run: |
