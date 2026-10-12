@@ -40,8 +40,13 @@ jobs:
 
       - name: Accepter les licences Android
         run: |
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "build-tools;35.0.0" "platform-tools" "platforms;android-35"
+          SDKMANAGER="$(find "$ANDROID_HOME" -name sdkmanager -type f | head -n 1)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERREUR: sdkmanager introuvable"
+            exit 1
+          fi
+          yes | "$SDKMANAGER" --licenses
+          "$SDKMANAGER" "build-tools;37.0.0" "platform-tools" "platforms;android-35"
 
       - name: Compiler TEPG PRO
         env:
