@@ -41,9 +41,22 @@ jobs:
             echo "ERREUR : sdkmanager introuvable"
             exit 1
           fi
-          yes | "$SDKMANAGER" --sdk_root="${ANDROID_HOME:-/usr/local/lib/android/sdk}" --licenses
-          "$SDKMANAGER" --sdk_root="${ANDROID_HOME:-/usr/local/lib/android/sdk}" --install "platform-tools" "platforms;android-35" "build-tools;37.0.0"
-          find "$ANDROID_HOME/build-tools" -name aidl -type f
+
+          SDK_ROOT="$HOME/.buildozer/android/platform/android-sdk"
+          mkdir -p "$SDK_ROOT"
+          export ANDROID_HOME="$SDK_ROOT"
+          export ANDROID_SDK_ROOT="$SDK_ROOT"
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+
+          yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses
+          "$SDKMANAGER" --sdk_root="$SDK_ROOT" --install \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;37.0.0"
+
+          test -x "$SDK_ROOT/build-tools/37.0.0/aidl"
+          echo "AIDL installé dans le SDK de Buildozer."
 
       - name: Compiler TEPG PRO
         env:
