@@ -25,7 +25,7 @@ jobs:
           java-version: "17"
 
       - name: Installer Android SDK
-        uses: android-actions/setup-android@v3
+        run: echo "Utilisation du SDK Android preinstalle"
 
       - name: Installer les dependances
         run: |
@@ -36,8 +36,13 @@ jobs:
 
       - name: Installer les outils Android et AIDL
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-          yes | sdkmanager --licenses
+          SDKMANAGER="$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}" -type f -name sdkmanager | head -n 1)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERREUR : sdkmanager introuvable"
+            exit 1
+          fi
+          yes | "$SDKMANAGER" --licenses
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
           find "$ANDROID_HOME/build-tools" -name aidl -type f
 
       - name: Compiler TEPG PRO
